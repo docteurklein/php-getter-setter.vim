@@ -176,8 +176,8 @@
 "         1 - insert before the current line / block
 "         2 - insert after the current line / block
 "
-"   b:phpgetset_getterTemplate
-"   b:phpgetset_setterTemplate
+"   g:phpgetset_getterTemplate
+"   g:phpgetset_setterTemplate
 "     These variables determine the text that will be inserted for a
 "     getter, setter, array-based getter, and array-based setter
 "     respectively.  The templates may contain the following placeholders
@@ -200,7 +200,7 @@
 "     This block of code can be produced by adding the following variable
 "     definition to your vimrc file.
 "
-"         let b:phpgetset_getterTemplate =
+"         let g:phpgetset_getterTemplate =
 "           \ "\n" .
 "           \ "/**\n" .
 "           \ " * Get %varname%.\n" .
