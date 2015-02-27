@@ -214,6 +214,25 @@
 "     This allows you to set indexed-based getters/setters if you desire.
 "     This is the default behavior.
 "
+"   PhpGetsetProcessFuncname(funcname)
+"     Function that will be called, if it does exists, to process the setter
+"     and getter function name.
+"
+"     For example, the following function will convert upper_camel_case into
+"     UpperCamelCase.
+"
+"     function PhpGetsetProcessFuncname(funcname)
+"         let l:funcname = split(tolower(a:funcname), "_")
+"         let l:i = 0
+"
+"         while l:i < len(l:funcname)
+"             let l:funcname[l:i] = toupper(l:funcname[l:i][0]) . strpart(l:funcname[l:i], 1)
+"             let l:i += 1
+"         endwhile
+"
+"         return join(l:funcname, "")
+"     endfunction
+"
 "
 " INSTALLATION
 " 1. Copy the script to your ${HOME}/.vim/ftplugins directory and make
