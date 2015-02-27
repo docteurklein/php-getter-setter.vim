@@ -250,8 +250,8 @@ set cpo&vim
 " The templates consist of a getter and setter template.
 "
 " Getter Templates
-if exists("b:phpgetset_getterTemplate")
-  let s:phpgetset_getterTemplate = b:phpgetset_getterTemplate
+if exists("g:phpgetset_getterTemplate")
+  let s:phpgetset_getterTemplate = g:phpgetset_getterTemplate
 else
   let s:phpgetset_getterTemplate =
     \ "    \n" .
@@ -268,8 +268,8 @@ endif
 
 
 " Setter Templates
-if exists("b:phpgetset_setterTemplate")
-  let s:phpgetset_setterTemplate = b:phpgetset_setterTemplate
+if exists("g:phpgetset_setterTemplate")
+  let s:phpgetset_setterTemplate = g:phpgetset_setterTemplate
 else
   let s:phpgetset_setterTemplate =
   \ "    \n" .
