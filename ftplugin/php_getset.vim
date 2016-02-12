@@ -176,8 +176,8 @@
 "         1 - insert before the current line / block
 "         2 - insert after the current line / block
 "
-"   b:phpgetset_getterTemplate
-"   b:phpgetset_setterTemplate
+"   g:phpgetset_getterTemplate
+"   g:phpgetset_setterTemplate
 "     These variables determine the text that will be inserted for a
 "     getter, setter, array-based getter, and array-based setter
 "     respectively.  The templates may contain the following placeholders
@@ -200,7 +200,7 @@
 "     This block of code can be produced by adding the following variable
 "     definition to your vimrc file.
 "
-"         let b:phpgetset_getterTemplate =
+"         let g:phpgetset_getterTemplate =
 "           \ "\n" .
 "           \ "/**\n" .
 "           \ " * Get %varname%.\n" .
@@ -213,6 +213,25 @@
 "     array-baded template that is invoked if a property is array-based.
 "     This allows you to set indexed-based getters/setters if you desire.
 "     This is the default behavior.
+"
+"   PhpGetsetProcessFuncname(funcname)
+"     Function that will be called, if it does exists, to process the setter
+"     and getter function name.
+"
+"     For example, the following function will convert upper_camel_case into
+"     UpperCamelCase.
+"
+"     function PhpGetsetProcessFuncname(funcname)
+"         let l:funcname = split(tolower(a:funcname), "_")
+"         let l:i = 0
+"
+"         while l:i < len(l:funcname)
+"             let l:funcname[l:i] = toupper(l:funcname[l:i][0]) . strpart(l:funcname[l:i], 1)
+"             let l:i += 1
+"         endwhile
+"
+"         return join(l:funcname, "")
+"     endfunction
 "
 "
 " INSTALLATION
@@ -250,8 +269,8 @@ set cpo&vim
 " The templates consist of a getter and setter template.
 "
 " Getter Templates
-if exists("b:phpgetset_getterTemplate")
-  let s:phpgetset_getterTemplate = b:phpgetset_getterTemplate
+if exists("g:phpgetset_getterTemplate")
+  let s:phpgetset_getterTemplate = g:phpgetset_getterTemplate
 else
   let s:phpgetset_getterTemplate =
     \ "    \n" .
@@ -268,8 +287,8 @@ endif
 
 
 " Setter Templates
-if exists("b:phpgetset_setterTemplate")
-  let s:phpgetset_setterTemplate = b:phpgetset_setterTemplate
+if exists("g:phpgetset_setterTemplate")
+  let s:phpgetset_setterTemplate = g:phpgetset_setterTemplate
 else
   let s:phpgetset_setterTemplate =
   \ "    \n" .
@@ -501,7 +520,12 @@ if !exists("*s:ProcessVariable")
   function s:ProcessVariable(variable)
     let s:indent    = substitute(a:variable, s:variable, '\1', '')
     let s:varname   = substitute(a:variable, s:variable, '\4', '')
-    let s:funcname  = toupper(s:varname[0]) . strpart(s:varname, 1)
+
+    if exists("*PhpGetsetProcessFuncname")
+        let s:funcname = PhpGetsetProcessFuncname(s:varname)
+    else
+        let s:funcname  = toupper(s:varname[0]) . strpart(s:varname, 1)
+    endif
 
     " If any getter or setter already exists, then just return as there
     " is nothing to be done.  The assumption is that the user already
