@@ -184,6 +184,10 @@
 "     which will be substituted by their appropriate values at insertion
 "     time:
 "
+" 	  %vartype% 	  If there was a docblock with a typehint above the
+" 	  property, then it will be filled with the type name eg: string,
+" 	  SomeObject
+"
 "         %varname%       The name of the property
 "         %funcname%      The method name ("getXzy" or "setXzy")
 "
@@ -275,9 +279,9 @@ else
   let s:phpgetset_getterTemplate =
     \ "    \n" .
     \ "    /**\n" .
-    \ "     * Get %varname%.\n" .
+    \ "     * Get %varname%\n" .
     \ "     *\n" .
-    \ "     * @return %varname%.\n" .
+    \ "     * @return %vartype% %varname%\n" .
     \ "     */\n" .
     \ "    public function %funcname%()\n" .
     \ "    {\n" .
@@ -293,11 +297,11 @@ else
   let s:phpgetset_setterTemplate =
   \ "    \n" .
   \ "    /**\n" .
-  \ "     * Set %varname%.\n" .
+  \ "     * Set %varname%\n" .
   \ "     *\n" .
-  \ "     * @param %varname% the value to set.\n" .
+  \ "     * @param %vartype% %varname%\n" .
   \ "     */\n" .
-  \ "    public function %funcname%($%varname%)\n" .
+  \ "    public function %funcname%($%varname%): %vartype%\n" .
   \ "    {\n" .
   \ "        $this->%varname% = $%varname%;\n" .
   \ "    }"
@@ -340,7 +344,8 @@ let s:lastline  = 0
 " Regular expressions used to match property statements
 let s:phpname = '[a-zA-Z_$][a-zA-Z0-9_$]*'
 let s:brackets = '\(\s*\(\[\s*\]\)\)\='
-let s:variable = '\(\s*\)\(\([private,protected,public]\s\+\)*\)\$\(' . s:phpname . '\)\s*\(;\|=[^;]\+;\)'
+"let s:variable = '\(\s*\)\(\([private,protected,public]\s\+\)*\)\$\(' . s:phpname . '\)\s*\(;\|=[^;]\+;\)'
+let s:variable = '@var\s\+\([a-zA-Z]*\)\s*\*\/\(\s*\)\(private\|public\|protected\)\s\+$\([a-zA-Z_$][a-zA-Z0-9_$]*\)'
 
 " The main entry point. This function saves the current position of the
 " cursor without the use of a mark (see note below)  Then the selected
@@ -453,7 +458,8 @@ endif
 "
 if !exists("*s:GetRangeAsString")
   function s:GetRangeAsString(first, last)
-    let line = a:first
+    " force the firs line to be the 2nd line ABOVE the selection
+    let line = a:first - 2
     let string = s:TrimRight(getline(line))
 
     while line < a:last
@@ -518,7 +524,8 @@ endif
 "
 if !exists("*s:ProcessVariable")
   function s:ProcessVariable(variable)
-    let s:indent    = substitute(a:variable, s:variable, '\1', '')
+    let s:vartype   = substitute(a:variable, s:variable, '\1', '')
+    let s:indent    = substitute(a:variable, s:variable, '\2', '')
     let s:varname   = substitute(a:variable, s:variable, '\4', '')
 
     if exists("*PhpGetsetProcessFuncname")
@@ -559,7 +566,7 @@ if !exists("*s:InsertGetter")
 
     let method = s:phpgetset_getterTemplate
 
-
+    let method = substitute(method, '%vartype%', s:vartype, 'g')
     let method = substitute(method, '%varname%', s:varname, 'g')
     let method = substitute(method, '%funcname%', 'get' . s:funcname, 'g')
 
@@ -575,6 +582,7 @@ if !exists("*s:InsertSetter")
 
     let method = s:phpgetset_setterTemplate
 
+    let method = substitute(method, '%vartype%', s:vartype, 'g')
     let method = substitute(method, '%varname%', s:varname, 'g')
     let method = substitute(method, '%funcname%', 'set' . s:funcname, 'g')
 
