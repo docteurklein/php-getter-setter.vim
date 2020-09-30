@@ -41,6 +41,18 @@
 "
 " =======================================================================
 "
+"  M O D I F I E D - by ZarqEon:
+"
+"  this is the signature that this plugin understands:
+"
+"  /*
+"  * @var int
+"  */
+"  public $asd;
+"
+"
+" =======================================================================
+"
 " DESCRIPTION
 " This filetype plugin enables a user to automatically add getter/setter
 " methods for PHP properties.  The script will insert a getter, setter,
